@@ -182,7 +182,8 @@ namespace AmeisenBotX.Core.Engines.Grinding
                 where vendor.Type == NpcType.VendorRepair
                 select vendor.Position).ToList();
 
-            Vector3 repairNpc = repairNpcsPos.OrderBy(e => e.GetDistance(Bot.Player.Position)).First();
+            Vector3 repairNpc = repairNpcsPos.MinBy(e => e.GetDistance(Bot.Player.Position));
+            if (repairNpc == default) return BtStatus.Failed;
             if (repairNpc.GetDistance(Bot.Player.Position) > 5.0f)
             {
                 Bot.Movement.SetMovementAction(MovementAction.Move, repairNpc);
@@ -443,17 +444,20 @@ namespace AmeisenBotX.Core.Engines.Grinding
 
             if (enemiesFightingMe.Any())
             {
-                Bot.Wow.ChangeTarget(enemiesFightingMe.FirstOrDefault().Guid);
+                IWowUnit firstEnemy = enemiesFightingMe.First();
+                Bot.Wow.ChangeTarget(firstEnemy.Guid);
                 return true;
             }
             if (enemiesTargetingMe.Any())
             {
-                Bot.Wow.ChangeTarget(enemiesTargetingMe.FirstOrDefault().Guid);
+                IWowUnit firstEnemy = enemiesTargetingMe.First();
+                Bot.Wow.ChangeTarget(firstEnemy.Guid);
                 return true;
             }
             if (enemiesAround.Any())
             {
-                Bot.Wow.ChangeTarget(enemiesAround.FirstOrDefault().Guid);
+                IWowUnit firstEnemy = enemiesAround.First();
+                Bot.Wow.ChangeTarget(firstEnemy.Guid);
                 return true;
             }
 
